@@ -4,7 +4,7 @@ char **tokenize(char *line)
 	int length = 0;
 	int range = 16;
 	char **tokens = malloc(range * sizeof(char *));
-	char *delim = " \t\r\n";
+	char *delim = " \t\r\n|";
 	char *token = strtok(line, delim);
 	
 	while (token != NULL)

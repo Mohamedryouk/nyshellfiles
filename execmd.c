@@ -2,36 +2,53 @@
 void execmd(char **argv)
 {
 	pid_t child = fork();
-	char *token;
-	int status;
+	char *token, *path;
+	int status, exitstatus;
+	int signal;
+	pid_t wapid;
 
 	if (child == 0)
 	{
 		if (argv[0][0] == '/')
 		{
-			execve(argv[0], argv, NULL);
-			wait(&status);
+			execve(argv[0], argv, environ);
+			perror("Execve error");
+			exit(EXIT_FAILURE);
 		}
 		else
 		{
 			token = getpath(argv[0]);
-			execve(token, argv, NULL);
-			exit(1);
+			if (token == NULL)
+			{
+				perror("Error");
+			}
+			if (token != NULL)
+			{
+				execve(token, argv, environ);
+				perror("execve error");
+				exit(EXIT_FAILURE);
+			}
 		}
-	}
-	else if (child > 0)
+		exit(0);
+	}else if (wapid > 0)
 	{
-		int status;
-		waitpid(child, &status, 0);
-		if (WIFEXITED(status))
+		wapid = waitpid(child, &status, 0);
+		if (wapid == -1)
 		{
 			return;
 		}
-		else if (WIFSIGNALED(status))
-		{
+		if (WIFEXITED(status)){
+			exitstatus = WEXITSTATUS(status);
 			return;
 		}
-	}else{
-		perror("Error command not found");
+		else if(WIFSIGNALED(status))
+		{
+			signal = WTERMSIG(status);
+			return;
+		}else{
+			return;
+		}
 	}
+	return;
+	
 }

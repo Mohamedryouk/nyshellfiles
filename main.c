@@ -8,6 +8,7 @@ int main(int __attribute__((unused)) ac, char **av __attribute__((unused)))
 	char **tokens;
 	char *line;
 	int mode = 1;
+
 	if (isatty(STDIN_FILENO))
 	{
 		while (mode)
